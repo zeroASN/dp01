@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: dp01
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/mis4student
+    username: root
+    password: xtc20031126.
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true

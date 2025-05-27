@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/css/layui.css">
+
+    <link rel="stylesheet" href="/css/dp01.css">
+    <script src="/js/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <div class="layui-row">
+        <div class="layui-col-xs12">
+
+
+            <h1 style="text-align: center">学生信息管理</h1>
+
+        </div>
+
+    </div>
+
+    <div class="layui-row">
+        <div class="layui-col-xs12 toolbar">
+
+            <button type="button" class="layui-btn layui-btn-sm layui-btn-normal"
+                    onclick="showStudenDlg();return false;">
+
+                <i class="layui-icon layui-icon-addition" ></i>
+            </button>
+
+
+        </div>
+
+    </div>
+    <div class="layui-row">
+        <div class="layui-col-xs12">
+
+
+            <table class="layui-table" lay-even>
+                <thead>
+                <tr>
+                    <th>id</th>
+                    <th>姓名</th>
+                    <th>性别</th>
+                    <th>年龄</th>
+                    <th>学号</th>
+                    <th>密码</th>
+                    <th>编辑</th>
+                </tr>
+                </thead>
+
+                <tbody id="studentTb">
+
+                </tbody>
+
+            </table>
+
+
+
+        </div>
+
+    </div>
+
+
+
+</div>
+
+<form class="layui-form dlgcontainer" id="studForm" style="display: none;">
+    <div class="demo-reg-container">
+        <div class="layui-form-item" id="formId">
+            <div class="layui-row">
+                <div class="layui-col-xs12">
+                    <div class="layui-input-wrap">
+                        <div class="layui-input-prefix">
+                            <i class="layui-icon layui-icon-cellphone"></i>
+                        </div>
+                        <input type="text" name="id" value=""  placeholder="id" lay-reqtext="id"
+                               autocomplete="off" class="layui-input" id="id">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-wrap">
+                <div class="layui-input-prefix">
+                    <i class="layui-icon layui-icon-vercode"></i>
+                </div>
+                <input type="text" name="sno" value="" lay-verify="required" placeholder="学号" lay-reqtext="请填学号" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-wrap">
+                <div class="layui-input-prefix">
+                    <i class="layui-icon layui-icon-username"></i>
+                </div>
+                <input type="text" name="name" value="" lay-verify="required" placeholder="姓名" autocomplete="off" class="layui-input" id="name" >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-wrap">
+                <label class="layui-form-label">性别</label>
+
+                <div class="layui-input-block">
+                    <input type="radio" name="sex" value="1" title="男" checked>
+                    <input type="radio" name="sex" value="2" title="女">
+
+                </div>
+
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-wrap">
+                <div class="layui-input-prefix">
+                    <i class="layui-icon layui-icon-password"></i>
+                </div>
+                <input type="text" name="age" value="" placeholder="年龄" autocomplete="off" class="layui-input" lay-affix="clear">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-wrap">
+                <div class="layui-input-prefix">
+                    <i class="layui-icon layui-icon-password"></i>
+                </div>
+                <input type="text" name="password" value="" lay-verify="required" placeholder="密码" autocomplete="off" class="layui-input" id="password">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="stud-dlg" id="btnOK">确定</button>
+        </div>
+
+    </div>
+</form>
+
+
+<script src="/js/layui.js"></script>
+
+
+<script src="/pagejs/dp01.js"></script>
+</body>
+</html>
