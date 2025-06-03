@@ -5,51 +5,59 @@ let layerIndex;
  * 弹出学生新增/更新对话框
  */
 function showStudenDlg(id) {
-
-    let title = "新增学生"
+    let title = "新增学生";
     if (id) {
-        //是编辑
-        title = "编辑学生"
-        $("#formId").css("display", "block");
+        title = "编辑学生";
+        $("#formId").css("display", "block"); // 显示ID字段（如果有）
 
-        //读取学生信息，并赋值
+        // 发送 AJAX 请求获取学生详情
         $.ajax({
-            url: "/api/student/" + id,
-            method: "GET"
-        }).done(result => {
+            url: `/api/student/${id}`, // 假设接口路径为 /api/student/{id}
+            method: "GET",
+            dataType: "json"
+        }).done(function (result) {
+            console.log("获取学生数据成功:", result);
+            const student = result.data || result; // 适配返回结构（可能是 R 对象或直接数据）
 
-            console.log(result)
+            // 遍历学生数据，填充到表单字段
+            $.each(student, function (key, value) {
+                // 确保在 #studForm 范围内查找字段，避免全局匹配
+                const $field = $("#studForm [name='" + key + "']");
 
-            // 遍历 result 对象并将值填充到 #studForm 表单中
-            $.each(result, function (key, value) {
-                // 修改选择器，确保选择的是 #studForm 内的字段
-                var field = $('#studForm [name="' + key + '"]');
-
-                if (field.is(':radio')) {
-                    field.filter('[value="' + value + '"]').prop('checked', true); // 选单对应的单选按钮
-                } else if (field.is(':checkbox')) {
-                    field.prop('checked', value === "yes"); // 选中复选框
-                } else {
-                    field.val(value); // 填充文本框或其他字段
+                if ($field.length) { // 确保字段存在
+                    if ($field.is(":radio")) {
+                        // 处理单选按钮（value 匹配时选中）
+                        $field.filter(`[value="${value}"]`).prop("checked", true);
+                    } else if ($field.is(":checkbox")) {
+                        // 处理复选框（value 为布尔值或 "yes"/"no" 时选中）
+                        $field.prop("checked", value === true || value === "yes");
+                    } else {
+                        // 处理文本框、下拉框等
+                        $field.val(value);
+                    }
                 }
             });
-        })
-
-
+        }).fail(function (error) {
+            console.error("获取学生数据失败:", error);
+            layer.msg("加载学生信息失败，请重试", { icon: 5 });
+        });
     } else {
-        //是新增
+        // 新增学生时重置表单
         $("#studForm")[0].reset();
-        $("#formId").css("display", "none");
+        $("#formId").css("display", "none"); // 隐藏ID字段（如果有）
     }
 
+    // 打开弹出层，并记录 layerIndex
     layerIndex = layer.open({
         type: 1,
         title: title,
-        area: ['520px', 'auto'],
-        content: $('#studForm') //捕获层
+        area: ["520px", "auto"],
+        content: $("#studForm"), // 确保表单元素正确选择
+        success: function () {
+            // 弹出层打开后，可选操作（如重置表单状态）
+            layui.form.render(); // 重新渲染 layui 表单组件（如果使用了下拉框等）
+        }
     });
-
-
 }
 
 
@@ -127,12 +135,8 @@ layui.use(function () {
         var data = obj.data; // 获得当前行数据
         // console.log(obj)
         if(obj.event === 'edit'){
-            layer.open({
-                title: '编辑 - id:' + data.id,
-                type: 1,
-                area: ['80%','80%'],
-                content: '<div style="padding: 16px;">自定义表单元素</div>'
-            });
+            // 调用已有的 showStudenDlg 函数，传入学生ID
+            showStudenDlg(data.id);
         }
     });
 
@@ -156,6 +160,7 @@ function deleteConfirm(){
 
     console.log(checkStatus)
 }
+
 function commitStuDlg() {
     let id = $("#id").val()
     let formData = $("#studForm").serialize();
@@ -168,9 +173,14 @@ function commitStuDlg() {
             data: formData
         }).done(result => {
             console.log(result);
-            if (result.id) {
+            if (result.code === 0) {
                 //(4)读取并刷新原来的读学生列表
-                loadStudentList();
+                const table = layui.table;
+                let student = getSearchCondtion();
+                table.reload("tbStudent", {
+                    where: { data: student }
+                });
+
 
                 //(3)关闭弹出层
                 console.log("add success!")
@@ -184,6 +194,9 @@ function commitStuDlg() {
             console.error("Request failed: " + textStatus + " - " + errorThrown);
             // 可以在这里处理错误逻辑
             alert("An error occurred. Please try again.");
+        }).always(() => {
+            // 无论请求成功还是失败，都恢复按钮状态
+            $("#btnOK").prop("disabled", false).removeClass("layui-btn-disabled");
         });
 
 
@@ -198,9 +211,13 @@ function commitStuDlg() {
             data: formData
         }).done(result => {
             console.log(result);
-            if (result.id) {
+            if (result.code === 0) {
                 //(4)读取并刷新原来的读学生列表
-                loadStudentList();
+                const table = layui.table;
+                let student = getSearchCondtion();
+                table.reload("tbStudent", {
+                    where: { data: student }
+                });
 
                 //(3)关闭弹出层
                 console.log("add success!")
@@ -214,6 +231,9 @@ function commitStuDlg() {
             console.error("Request failed: " + textStatus + " - " + errorThrown);
             // 可以在这里处理错误逻辑
             alert("An error occurred. Please try again.");
+        }).always(() => {
+            // 无论请求成功还是失败，都恢复按钮状态
+            $("#btnOK").prop("disabled", false).removeClass("layui-btn-disabled");
         });
 
     }
