@@ -8,11 +8,11 @@ function showStudenDlg(id) {
     let title = "新增学生";
     if (id) {
         title = "编辑学生";
-        $("#formId").css("display", "block"); // 显示ID字段（如果有）
+        $("#formId").css("display", "block");
 
         // 发送 AJAX 请求获取学生详情
         $.ajax({
-            url: `/api/student/${id}`, // 假设接口路径为 /api/student/{id}
+            url: `/api/student/${id}`,
             method: "GET",
             dataType: "json"
         }).done(function (result) {
