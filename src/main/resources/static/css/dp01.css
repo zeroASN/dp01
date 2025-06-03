@@ -8,3 +8,12 @@
 .dlgcontainer{
     margin: 50px;
 }
+
+.queryBox{
+    margin: 10px 0;
+    border: solid 1px #aaaaaa;
+    padding: 10px;
+}
+.query-inline{
+    display: flex;
+}

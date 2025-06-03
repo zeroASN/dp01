@@ -21,4 +21,11 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
      * @return
      */
     List<Student> findByNameAndPassword(String name, String password);
+
+    /**
+     * 按学号查询
+     * @param sno
+     * @return
+     */
+    public List<Student> findBySno(String sno);
 }

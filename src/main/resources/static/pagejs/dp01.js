@@ -1,40 +1,3 @@
-$(function () {
-
-//todo write my js code at here
-
-    loadStudentList();
-
-});
-
-function loadStudentList() {
-
-
-    $.ajax({
-        url: "/api/student/list"
-
-    }).done(function (data) {
-
-        // console.log(data)
-        let html = "";
-        data.forEach((element, index) => {
-            html += "<tr>"
-            html += "<td>" + element.id + "</td>"
-            html += "<td>" + element.name + "</td>"
-            html += "<td>" + element.sex + "</td>"
-            html += "<td>" + element.age + "</td>"
-            html += "<td>" + element.sno + "</td>"
-            html += "<td>" + element.password + "</td>"
-
-            html += "<td> <a href='#' onclick='showStudenDlg(" + element.id
-                + ")'>编辑</a> &nbsp;&nbsp;<a href='#' onclick='deleteById(" +
-                +element.id + ")'>删除</a></td>"
-
-            html += "</tr>"
-        })
-        $("#studentTb").html(html)
-
-    });
-}
 
 let layerIndex;
 
@@ -89,6 +52,24 @@ function showStudenDlg(id) {
 
 }
 
+
+function getSearchCondtion() {
+    let formData= {}
+    // 遍历每个输入元素，将其值存储到 formData 对象中
+    $('#queryForm').find('input, select').each(function() {
+        let name = $(this).attr( 'name'); // 获取元素的 name 属性
+        let value = $(this).val(); // 获取元素的值
+
+        // 只有 name 属性存在且值不为空才会添加到 formData 中
+        if (name && value) {
+            formData[name] = value;
+        }
+    });
+
+    return formData
+}
+
+
 layui.use(function () {
 
     //(1)验证表单是否合法
@@ -98,9 +79,83 @@ layui.use(function () {
         commitStuDlg();
     })
 
+    //(2)表格初始化
+
+    const table = layui.table;
+
+    let student = getSearchCondtion();
+
+    // 创建渲染实例
+    table.render({
+        elem: '#tbStudent',
+        url: '/api/student/getbypage', // 此处为静态模拟数据，实际使用时需换成真实接口
+
+        method: "POST",
+        contentType: 'application/json', // 确保以 JSON 格式发送
+        where: {"data": student},
+
+        page: true,
+        cols: [[
+            {type: 'checkbox', fixed: 'left'},
+            {field: 'id', fixed: 'left', width: 80, title: 'id', sort: true},
+            {field: 'name', title: '姓名'},
+            {
+                field: 'sno',
+                title: '学号',
+
+                width: 150,
+
+            },
+            {field: 'sex', width: 80, title: '性别', sort: true,
+                templet: d => d.sex === 1 ? '男' : (d.sex === 2 ? '女' : '未知'),
+            },
+
+            {field: 'age', width: 100, title: '年龄', sort: true},
+
+            {field: 'right', title: '操作', width: 134, minWidth: 125, templet: '#editTemplate'}
+        ]],
+        done: function (rs) {
+            //console.log(rs)
+        }
+
+    });
+
+
+    // 触发单元格工具事件
+    table.on('tool(tbStudent)', function (obj){
+
+        var data = obj.data; // 获得当前行数据
+        // console.log(obj)
+        if(obj.event === 'edit'){
+            layer.open({
+                title: '编辑 - id:' + data.id,
+                type: 1,
+                area: ['80%','80%'],
+                content: '<div style="padding: 16px;">自定义表单元素</div>'
+            });
+        }
+    });
 
 });
 
+function search(){
+    let student = getSearchCondtion();
+
+    const table = layui.table;
+    table.reloadData("tbStudent", {
+        where: {data:student}
+    });
+    console.log("where condition:"+JSON.stringify(student))
+}
+
+function deleteConfirm(){
+
+    const table = layui.table;
+    // 获取表格的选中状态
+    const checkStatus = table.checkStatus('tbStudent'); // 'tbStudent' 是你的表格的 ID 或 lay-filter
+
+    console.log(checkStatus)
+}
 function commitStuDlg() {
     let id = $("#id").val()
     let formData = $("#studForm").serialize();

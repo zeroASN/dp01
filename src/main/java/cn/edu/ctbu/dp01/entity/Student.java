@@ -27,6 +27,6 @@ public class Student {
     //学号
     private String sno;
 
-    //秘密
+    //密码
     private String password;
 }
